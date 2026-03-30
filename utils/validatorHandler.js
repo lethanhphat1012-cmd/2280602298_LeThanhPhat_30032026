@@ -1,4 +1,4 @@
-let { body, validationResult } = require('express-validator')
+let { body, validationResult, param } = require('express-validator');
 let util = require('util')
 let options = {
     password: {
@@ -9,6 +9,7 @@ let options = {
         minNumbers: 1
     }
 }
+
 
 module.exports = {
     postUserValidator: [
@@ -62,5 +63,22 @@ module.exports = {
         } else {
             next()
         }
-    }
+    },
+    getUserIdValidator: [
+        param('userID').isMongoId().withMessage("ID người dùng không hợp lệ")
+    ],
+
+    // Validator cho việc gửi tin nhắn mới
+    postMessageValidator: [
+        body('to').notEmpty().withMessage("Người nhận không được để trống")
+            .isMongoId().withMessage("ID người nhận không đúng định dạng"),
+        
+        // Kiểm tra logic: Nếu không có file thì text bắt buộc phải có
+        body('text').custom((value, { req }) => {
+            if (!req.file && (!value || value.trim() === "")) {
+                throw new Error("Nội dung tin nhắn hoặc file không được để trống");
+            }
+            return true;
+        })
+    ],
 }

@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var messageRouter = require('./routes/messages');
 let mongoose = require('mongoose')
 
 
@@ -33,6 +34,8 @@ app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/inventories', require('./routes/inventories'));
 app.use('/api/v1/carts', require('./routes/carts'));
 app.use('/api/v1/upload', require('./routes/upload'));
+app.use('/api/v1/messages', messageRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -48,5 +51,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.send(err.message);
 });
-
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server đang chay tai: http://localhost:${PORT}`);
+});
 module.exports = app;

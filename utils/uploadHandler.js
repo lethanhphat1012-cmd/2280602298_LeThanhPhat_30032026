@@ -26,6 +26,16 @@ let filterExcel = function (req, file, cb) {
         cb(new Error("file sai dinh dang"), false)
     }
 }
+
+let filterMessageFile = function (req, file, cb) {
+    // Cách này sẽ cho phép TẤT CẢ các loại file
+    cb(null, true);
+    
+    /* Hoặc nếu muốn an toàn hơn, hãy log mimetype ra để biết file bạn đang gửi là gì:
+    console.log("File đang gửi có MimeType là:", file.mimetype);
+    cb(null, true); 
+    */
+}
 module.exports = {
     uploadImage: multer({
         storage: storage,
@@ -36,6 +46,12 @@ module.exports = {
         storage: storage,
         limits: 5 * 1024 * 1024,
         fileFilter: filterExcel
+    }),
+
+    uploadMessageFile: multer({
+        storage: storage,
+        limits: { fileSize: 10 * 1024 * 1024 }, // Giới hạn 10MB cho file đính kèm
+        fileFilter: filterMessageFile
     })
 }
 
